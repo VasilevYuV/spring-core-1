@@ -1,0 +1,8 @@
+app:
+  name: "Task Manager"
+  max-tasks: 5
+  default-priority: "LOW"
+
+spring:
+  profiles:
+    active: dev
