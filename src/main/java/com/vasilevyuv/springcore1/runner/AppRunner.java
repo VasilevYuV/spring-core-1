@@ -53,6 +53,9 @@ public class AppRunner implements CommandLineRunner {
         // Шаг 6: ApplicationContext
         step6ApplicationContextDemo();
 
+        // Шаг 7: Переключение профиля
+        step7printing();
+
         System.out.println("\n========== СЦЕНАРИЙ ЗАВЕРШЕН ==========\n");
     }
 
@@ -68,7 +71,7 @@ public class AppRunner implements CommandLineRunner {
         System.out.println("=== Шаг 2: Добавление задач ===");
         taskService.addTask("Task LOW", "Description for LOW task", TaskPriority.LOW);
         taskService.addTask("Task MEDIUM", "Description for MEDIUM task", TaskPriority.MEDIUM);
-        taskService.addTask("Task HIGH", "Description for HIGH task", null); // null для проверки default priority
+        taskService.addTask("Task HIGH", "Description for HIGH task", TaskPriority.HIGH);
 
         System.out.println("Все задачи после добавления:");
         taskService.getAllTasks().forEach(System.out::println);
@@ -123,21 +126,17 @@ public class AppRunner implements CommandLineRunner {
                 .filter(t -> t.getStatus() == TaskStatus.DONE)
                 .forEach(System.out::println);
 
-        System.out.println("\nIN_PROGRESS задачи:");
+        System.out.println("\nHIGH задачи:");
         taskService.getAllTasks().stream()
-                .filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS)
+                .filter(t -> t.getPriority() == TaskPriority.HIGH)
                 .forEach(System.out::println);
         System.out.println();
     }
 
     private void step5PrototypeDemo() {
         System.out.println("=== Шаг 5: Prototype и ObjectProvider ===");
-        System.out.println("Первый вызов printStats():");
+        System.out.println("Вызов printStats():");
         taskService.printStats();
-
-        System.out.println("Второй вызов printStats():");
-        taskService.printStats(); // UUID должен быть разный (R15)
-        System.out.println();
     }
 
     private void step6ApplicationContextDemo() {
@@ -159,5 +158,10 @@ public class AppRunner implements CommandLineRunner {
                     System.out.println("  - " + name + " (" + context.getBean(name).getClass().getSimpleName() + ")");
                 });
         System.out.println();
+    }
+
+    private void step7printing() {
+        System.out.println("=== Шаг 7: Переключение профиля ===");
+        taskService.getAllTasks().forEach(System.out::println);
     }
 }

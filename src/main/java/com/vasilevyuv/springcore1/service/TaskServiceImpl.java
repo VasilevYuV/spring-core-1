@@ -83,6 +83,8 @@ public class TaskServiceImpl implements TaskService {
     public void printStats() {
         // Получаем новый экземпляр TaskStatsService через ObjectProvider (R14)
         TaskStatsService statsService = statsServiceProvider.getObject();
-        String uuid = statsService.getUuid();
+        statsService.getUuid();
+        TaskStatsService statsService2 = statsServiceProvider.getObject();
+        statsService2.getUuid();
     }
 }
