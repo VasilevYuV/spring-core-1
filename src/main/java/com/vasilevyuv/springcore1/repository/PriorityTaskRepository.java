@@ -3,7 +3,7 @@ package com.vasilevyuv.springcore1.repository;
 import com.vasilevyuv.springcore1.model.Task;
 import com.vasilevyuv.springcore1.model.TaskStatus;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 @Profile("prod")
 public class PriorityTaskRepository implements TaskRepository {
     private final List<Task> tasks = new ArrayList<>();
@@ -28,9 +28,11 @@ public class PriorityTaskRepository implements TaskRepository {
                 .sorted(Comparator.comparing(task -> task.getPriority().ordinal()))
                 .collect(Collectors.toList());
     }
-    public void clear(){
-        tasks.clear();
-        counter.set(0);
+    public Task delete(Long id) {
+        return tasks.stream()
+                .filter(t -> t.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Задача с id " + id + " не найдена"));
     }
 
     @Override

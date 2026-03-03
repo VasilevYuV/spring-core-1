@@ -8,7 +8,6 @@ import java.util.List;
 public interface TaskRepository {
     Task save(Task task);
     List<Task> findAll();
-    void clear();
-
+    Task delete(Long id);
     void updateStatus(Long id, TaskStatus status);
 }

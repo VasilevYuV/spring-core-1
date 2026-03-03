@@ -63,9 +63,7 @@ public class TaskServiceImpl implements TaskService {
             priority = TaskPriority.valueOf(defaultPriorityStr.toUpperCase());
         }
 
-        // Генерация ID (простая реализация)
-        Long newId = System.currentTimeMillis();
-        Task task = new Task(newId, title, description, priority);
+        Task task = new Task(title, description, priority);
         // Статус NEW устанавливается в конструкторе Task
 
         return taskRepository.save(task);

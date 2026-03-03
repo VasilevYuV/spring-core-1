@@ -4,14 +4,14 @@ import com.vasilevyuv.springcore1.model.Task;
 import com.vasilevyuv.springcore1.model.TaskStatus;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 @Primary
 @Profile("dev")
 public class InMemoryTaskRepository implements TaskRepository {
@@ -28,9 +28,11 @@ public class InMemoryTaskRepository implements TaskRepository {
                 .map(task -> new Task(task.getId(), task.getTitle(), task.getDescription(), task.getPriority(), task.getStatus()))
                 .collect(Collectors.toList());
     }
-    public void clear(){
-        tasks.clear();
-        counter.set(0);
+    public Task delete(Long id) {
+        return tasks.stream()
+                .filter(t -> t.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Задача с id " + id + " не найдена"));
     }
 
     @Override
