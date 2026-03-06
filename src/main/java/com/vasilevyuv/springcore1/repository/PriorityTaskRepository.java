@@ -1,5 +1,6 @@
 package com.vasilevyuv.springcore1.repository;
 
+import com.vasilevyuv.springcore1.exception.NotFoundException;
 import com.vasilevyuv.springcore1.model.Task;
 import com.vasilevyuv.springcore1.model.TaskStatus;
 import org.springframework.context.annotation.Profile;
@@ -17,33 +18,47 @@ public class PriorityTaskRepository implements TaskRepository {
     private final List<Task> tasks = new ArrayList<>();
     private final AtomicInteger counter = new AtomicInteger();
 
+    @Override
     public Task save(Task task) {
         task.setId((long) counter.getAndIncrement());
         tasks.add(task);
         return task;
     }
+
+    @Override
     public List<Task> findAll() {
         return tasks.stream()
                 .map(task -> new Task(task.getId(), task.getTitle(), task.getDescription(), task.getPriority(), task.getStatus()))
-                .sorted(Comparator.comparing(task -> task.getPriority().ordinal()))
+                .sorted(Comparator.comparing(task -> task.getPriority().ordinal(), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
-    }
-    public Task delete(Long id) {
-        return tasks.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Задача с id " + id + " не найдена"));
     }
 
     @Override
-    public void updateStatus(Long id, TaskStatus status) {
+    public void delete(Long id) {
         Task task = tasks.stream()
                 .filter(t -> t.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Задача с id " + id + " не найдена"));
+                .orElseThrow(() -> new NotFoundException("Задача с id " + id + " не найдена"));
+        tasks.remove(task);
+    }
+
+    @Override
+    public Task updateStatus(Long id, TaskStatus status) {
+        Task task = tasks.stream()
+                .filter(t -> t.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Задача с id " + id + " не найдена"));
 
         task.setStatus(status);
-        System.out.println("Статус задачи " + id + " изменен на " + status);
+        return task;
+    }
+
+    @Override
+    public Task findById(Long id) {
+        return tasks.stream()
+                .filter(t -> t.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Задача с id " + id + " не найдена"));
     }
 
 }

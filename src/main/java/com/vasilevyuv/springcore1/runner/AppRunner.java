@@ -1,4 +1,5 @@
 package com.vasilevyuv.springcore1.runner;
+/*
 
 
 import com.vasilevyuv.springcore1.config.AppProperties;
@@ -164,4 +165,4 @@ public class AppRunner implements CommandLineRunner {
         System.out.println("=== Шаг 7: Переключение профиля ===");
         taskService.getAllTasks().forEach(System.out::println);
     }
-}
+}*/
