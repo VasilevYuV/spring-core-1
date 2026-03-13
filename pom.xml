@@ -70,6 +70,18 @@
             <version>3.0.0</version>
         </dependency>
 
+        <!-- Основной стартер -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- База данных (в памяти для разработки) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -80,5 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

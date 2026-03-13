@@ -1,17 +1,52 @@
-app:
-  name: "Task Manager"
-  max-tasks: 5
-  default-priority: "LOW"
-
 spring:
+  profiles:
+    active: dev
+
+  datasource:
+    # Для разработки (H2 в памяти)
+    url: jdbc:h2:mem:taskdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true  # Показывать SQL в консоли (для отладки)
+    
+    properties:
+      hibernate:
+        format_sql: true  # Красиво форматировать SQL
+        highlight_sql: true  # Цветной SQL в консоли
+        use_sql_comments: true  # Комментарии в SQL (откуда запрос)
+
+        jdbc:
+          batch_size: 20  # Пакетная вставка
+        order_inserts: true  # Оптимизация вставок
+        order_updates: true  # Оптимизация обновлений
+        
+        # Диалект БД (обычно определяется автоматически)
+        dialect: org.hibernate.dialect.H2Dialect
+
+    # Стратегия именования: camelCase -> snake_case
+    # Task.createdAt -> task.created_at
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  # H2 Console (очень полезно для отладки)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console  # http://localhost:8081/h2-console
+
   web:
     resources:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/META-INF/resources/webjars/
   mvc:
     static-path-pattern: /**
-  profiles:
-    active: dev
 
+# Swagger/OpenAPI
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -24,7 +59,7 @@ springdoc:
     disable-swagger-default-url: true
 
 server:
-  port: 8081
+  port: 8081  # Отлично что не 8080 (меньше конфликтов)
 
 logging:
   level:
@@ -32,3 +67,7 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.boot: DEBUG
     com.vasilevyuv: DEBUG
+    # Добавить для JPA/Hibernate:
+    org.hibernate.SQL: DEBUG  # SQL запросы
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Значения параметров
+    org.springframework.transaction: DEBUG  # Логи транзакций

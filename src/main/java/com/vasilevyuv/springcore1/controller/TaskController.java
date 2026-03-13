@@ -53,8 +53,9 @@ public class TaskController {
                     content = @Content(schema = @Schema(implementation = Map.class)))
     })
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Task task = taskService.getTaskById(id);
-        return ResponseEntity.ok(task);
+        return taskService.getTaskById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -69,9 +70,9 @@ public class TaskController {
             @Parameter(description = "Данные новой задачи", required = true)
             @RequestBody Task task
     ) {
-        Task createdTask = taskService.addTask(task.getTitle(),
+        Task createdTask = taskService.createTask(new Task (task.getTitle(),
                 task.getDescription(),
-                task.getPriority());
+                task.getPriority()));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
 
@@ -90,6 +91,7 @@ public class TaskController {
             @Parameter(description = "Новые данные задачи", required = true)
             @RequestBody Task task
     ) {
+        task.setId(id);
         Task updatedTask = taskService.updateTask(id, task);
         return ResponseEntity.ok(updatedTask);
     }
@@ -116,7 +118,7 @@ public class TaskController {
             throw new IllegalArgumentException("Status field is required");
         }
         TaskStatus taskStatus = TaskStatus.valueOf(statusStr.toUpperCase());
-        Task updatedTask = taskService.changeStatus(id, taskStatus);
+        Task updatedTask = taskService.updateStatus(id, taskStatus);
         return ResponseEntity.ok(updatedTask);
     }
 
